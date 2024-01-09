@@ -1,0 +1,346 @@
+/* Задание№1
+Создайте класс MyMatrix, представляющий матрицу m на n.
+Создайте конструктор, принимающий число строк и столбцов, заполняющий матрицу случайными числами в диапазоне, который пользователь вводит
+при запуске программы.
+Создайте метод Fill, перезаполняющий матрицу случайными значениями.
+Создайте метод ChangeSize, изменяющий число строк и/или столбцов с копированием значений существующей матрицы.
+Если новая матрица больше существующий, то метод должен дозаполнить новую матрицу случайными числами.
+Создайте метод ShowPartialy, принимающий в качестве параметров начальные и конечные значения строк и столбцов,
+значения матрицы внутри которых нужно вывести на консоль.
+Создайте метод Show, выводящий все значения матрицы на консоль.
+Создайте индексатор для матрицы вида this[int index1, int index2] с аксессором и мутатором.*/
+
+//using System;
+
+//class MyMatrix
+//{
+//    private int[,] matrix;
+//    private int rows;
+//    private int columns;
+//    private Random random;
+
+//    public MyMatrix(int rows, int columns)
+//    {
+//        this.rows = rows;
+//        this.columns = columns;
+//        matrix = new int[rows, columns];
+//        random = new Random();
+//        Fill();
+//    }
+
+//    public void Fill()
+//    {
+//        Console.Write("Введите минимальное значение: ");
+//        int minValue = int.Parse(Console.ReadLine());
+
+//        Console.Write("Введите максимальное значение: ");
+//        int maxValue = int.Parse(Console.ReadLine());
+
+//        for (int i = 0; i < rows; i++)
+//        {
+//            for (int j = 0; j < columns; j++)
+//            {
+//                matrix[i, j] = random.Next(minValue, maxValue + 1);
+//            }
+//        }
+//    }
+
+//    public void ChangeSize(int newRows, int newColumns)
+//    {
+//        int[,] newMatrix = new int[newRows, newColumns];
+
+//        for (int i = 0; i < Math.Min(rows, newRows); i++)
+//        {
+//            for (int j = 0; j < Math.Min(columns, newColumns); j++)
+//            {
+//                newMatrix[i, j] = matrix[i, j];
+//            }
+//        }
+
+//        for (int i = 0; i < newRows; i++)
+//        {
+//            for (int j = 0; j < newColumns; j++)
+//            {
+//                if (i >= rows || j >= columns)
+//                {
+//                    newMatrix[i, j] = random.Next();
+//                }
+//            }
+//        }
+
+//        rows = newRows;
+//        columns = newColumns;
+//        matrix = newMatrix;
+//    }
+
+//    public void ShowPartially(int startRow, int endRow, int startColumn, int endColumn)
+//    {
+//        for (int i = startRow; i <= endRow && i < rows; i++)
+//        {
+//            for (int j = startColumn; j <= endColumn && j < columns; j++)
+//            {
+//                Console.Write(matrix[i, j] + "\t");
+//            }
+//            Console.WriteLine();
+//        }
+//    }
+
+//    public void Show()
+//    {
+//        for (int i = 0; i < rows; i++)
+//        {
+//            for (int j = 0; j < columns; j++)
+//            {
+//                Console.Write(matrix[i, j] + "\t");
+//            }
+//            Console.WriteLine();
+//        }
+//    }
+
+//    // Индексатор с аксессором и мутатором
+//    public int this[int index1, int index2]
+//    {
+//        // Аксессор (геттер)
+//        get
+//        {
+//            return matrix[index1, index2];
+//        }
+//        // Мутатор (сеттер)
+//        set
+//        {
+//            matrix[index1, index2] = value;
+//        }
+//    }
+//}
+
+//class Program
+//{
+//    static void Main()
+//    {
+//        MyMatrix matrix = new MyMatrix(3, 3);
+
+//        Console.WriteLine("Исходная матрица:");
+//        matrix.Show();
+
+//        Console.WriteLine("\nИзменение размера матрицы:");
+//        matrix.ChangeSize(4, 4);
+//        matrix.Show();
+
+//        Console.WriteLine("\nЧасть матрицы:");
+//        matrix.ShowPartially(1, 2, 0, 2);
+
+//        Console.WriteLine("\nМатрица с новыми значениями через индексатор:");
+//        matrix[0, 0] = 100;
+//        matrix[2, 1] = 50;
+//        matrix.Show();
+//    }
+//}
+
+/* Создайте класс MyList<T>.
+Реализуйте в простейшем приближении возможность использования его экземпляра аналогично экземпляру класса List<T>.
+Минимально требуемый интерфейс взаимодействия с экземпляром должен включать метод добавления элемента, индексатор
+для получения значения элемента по указанному индексу, свойство только для чтения для получения общего количества
+элементов и поддержку блока инициализации.
+При выполнении нельзя использовать коллекции, только массивы. */
+
+using System;
+
+class MyList<T>
+{
+    private T[] array;  // Массив для хранения элементов
+    private int count;   // Текущее количество элементов в массиве
+
+    // Конструктор класса, принимающий начальную емкость массива
+    public MyList(int capacity)
+    {
+        array = new T[capacity];
+        count = 0;
+    }
+
+
+    // Метод добавления элемента в конец списка
+    public void Add(T item)
+    {
+        // Если массив заполнен, увеличиваем его размер вдвое
+        if (count == array.Length)
+        {
+            ResizeArray();
+        }
+
+        // Добавляем элемент и увеличиваем счетчик
+        array[count] = item;
+        count++;
+    }
+
+    // Индексатор для доступа к элементам по индексу
+    public T this[int index]
+    {
+        get
+        {
+            // Проверяем валидность индекса
+            if (index < 0 || index >= count)
+            {
+                throw new IndexOutOfRangeException("Индекс вне допустимого диапазона");
+            }
+
+            return array[index];
+        }
+    }
+
+    // Свойство только для чтения, возвращающее общее количество элементов в массиве
+    public int Count
+    {
+        get { return count; }
+    }
+
+    // Метод для поддержки блока инициализации
+    public void Initialize(params T[] items)
+    {
+        // Проверяем, хватает ли места в массиве для новых элементов
+        if (count + items.Length > array.Length)
+        {
+            ResizeArray(count + items.Length);
+        }
+
+        // Добавляем элементы из блока инициализации
+        foreach (T item in items)
+        {
+            array[count] = item;
+            count++;
+        }
+    }
+
+    // Приватный метод для изменения размера массива
+    private void ResizeArray(int newSize = 0)
+    {
+        int newCapacity = newSize == 0 ? array.Length * 2 : newSize;
+        T[] newArray = new T[newCapacity];
+
+        // Копируем элементы из старого массива в новый
+        for (int i = 0; i < count; i++)
+        {
+            newArray[i] = array[i];
+        }
+
+        // Заменяем старый массив на новый
+        array = newArray;
+    }
+}
+
+class Program
+{
+    static void Main()
+    {
+        // Пример использования MyList
+        MyList<int> myList = new MyList<int>(3);
+
+        // Добавление элементов
+        myList.Add(1);
+        myList.Add(2);
+        myList.Add(3);
+
+        // Доступ к элементам по индексу
+        Console.WriteLine("Элемент с индексом 1: " + myList[1]);
+
+        // Получение общего количества элементов
+        Console.WriteLine("Количество элементов: " + myList.Count);
+
+        // Инициализация с использованием блока инициализации
+        //myList.Initialize(4, 5, 6);
+        MyList<int> = new() { 1, 2, 3 };
+        // Вывод всех элементов
+        Console.WriteLine("Все элементы:");
+        for (int i = 0; i < myList.Count; i++)
+        {
+            Console.Write(myList[i] + " ");
+        }
+    }
+}
+
+/* Создайте коллекцию MyDictionary<TKey,TValue>.
+Реализуйте в простейшем приближении возможность использования ее экземпляра аналогично экземпляру класса Dictionary<TKey,TValue>.
+Минимально требуемый интерфейс взаимодействия с экземпляром должен включать метод добавления элемента, индексатор для получения
+значения элемента по указанному индексу и свойство только для чтения для получения общего количества элементов.
+Реализуйте возможность перебора элементов коллекции в цикле foreach. При выполнении нельзя использовать коллекции, только массивы.*/
+
+internal class Program
+{
+    static void Main(string[] args)
+    {
+        MyDictionary<int, string> myDictionary = new MyDictionary<int, string>();
+
+        // Добавление элементов
+        myDictionary.Add(1, "Значение 1");
+        myDictionary.Add(2, "Значение 2");
+        myDictionary.Add(3, "Значение 3");
+
+        // Получение значения по ключу
+        string value = myDictionary[2];
+        Console.WriteLine("Значение элемента по ключу 2: " + value);
+
+        // Получение общего количества элементов
+        int size = myDictionary.Size;
+        Console.WriteLine("Общее количество элементов: " + size);
+
+        // Использование цикла foreach для перебора элементов
+        Console.WriteLine("Все элементы:");
+        foreach (KeyValuePair<int, string> pair in myDictionary)
+        {
+            Console.WriteLine("Ключ: " + pair.Key + ", Значение: " + pair.Value);
+        }
+    }
+}
+
+public class MyDictionary<TKey, TValue>
+{
+    private TKey[] keys;
+    private TValue[] values;
+    private int size;
+
+    public MyDictionary()
+    {
+        keys = new TKey[0];
+        values = new TValue[0];
+        size = 0;
+    }
+
+    // Метод для добавления элемента в словарь
+    public void Add(TKey key, TValue value)
+    {
+        Array.Resize(ref keys, size + 1);
+        Array.Resize(ref values, size + 1);
+        keys[size] = key;
+        values[size] = value;
+        size++;
+    }
+
+    // Индексатор для получения значения по ключу
+    public TValue this[TKey key]
+    {
+        get
+        {
+            int index = Array.IndexOf(keys, key);
+            if (index == -1)
+            {
+                throw new KeyNotFoundException();
+            }
+
+            return values[index];
+        }
+    }
+
+    // Свойство для получения общего количества элементов
+    public int Size
+    {
+        get { return size; }
+    }
+
+    // Реализация интерфейса IEnumerable для поддержки цикла foreach
+    public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
+    {
+        for (int i = 0; i < size; i++)
+        {
+            yield return new KeyValuePair<TKey, TValue>(keys[i], values[i]);
+        }
+    }
+}
